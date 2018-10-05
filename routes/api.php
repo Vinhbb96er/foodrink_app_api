@@ -19,4 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['namespace' => 'Api'], function () {
     Route::resource('/devices', 'DeviceController');
+    Route::resource('/orders', 'OrderController');
 });

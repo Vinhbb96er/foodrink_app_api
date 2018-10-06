@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Device as DeviceResource;
-use App\Models\Device;
 use Exception;
-use DB;
+use App\Models\Order;
+use App\Http\Resources\Order as OrderResource;
 
-class DeviceController extends Controller
+class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +17,7 @@ class DeviceController extends Controller
      */
     public function index()
     {
-        return new DeviceResource(Device::all());
+        return new OrderResource(Order::all());
     }
 
     /**
@@ -39,19 +38,7 @@ class DeviceController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
-
-        try {
-            $data = $request->only('device_secret');
-
-            Device::create($data);
-            DB::commit();
-
-            return response()->json(['code' => 201]);
-        } catch (Exception $e) {
-            DB::rollback();
-            abort($e);
-        }
+        //
     }
 
     /**
@@ -85,7 +72,18 @@ class DeviceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $order = Order::findOrFail($id);
+
+            $order->update([
+                'shipper_id' => $request->shipper_id,
+            ]);
+
+            return response()->json(['code' => 201]);
+        } catch (Exception $e) {
+            report($e);
+            abort($e);
+        }
     }
 
     /**

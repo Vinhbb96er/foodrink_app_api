@@ -79,11 +79,13 @@ class OrderController extends Controller
                 'shipper_id' => $request->shipper_id,
             ]);
 
-            return response()->json(['code' => 201]);
+            $code = 200;
         } catch (Exception $e) {
             report($e);
-            abort($e);
+            $code = 404;
         }
+        
+        return response()->json(['code' => $code]);
     }
 
     /**

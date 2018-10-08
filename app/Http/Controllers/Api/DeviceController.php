@@ -44,14 +44,21 @@ class DeviceController extends Controller
         try {
             $data = $request->only('device_secret');
 
-            Device::create($data);
-            DB::commit();
+            $device = Device::where('device_secret', $data['device_secret'])->first();
 
-            return response()->json(['code' => 201]);
+            if (!$device) {
+                Device::create($data);
+            }
+
+            DB::commit();
+            $code = 201;
         } catch (Exception $e) {
             DB::rollback();
-            abort($e);
+            report($e);
+            $code = 404;
         }
+        
+        return response()->json(['code' => $code]);
     }
 
     /**
@@ -94,8 +101,27 @@ class DeviceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($token)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $device = Device::where('device_secret', $token)->first();
+
+            if (!$device) {
+                throw new Exception("Error Processing Request", 1);
+            }
+
+            $device->delete();
+
+            $code = 200;
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            abort($e);
+            $code = 404;
+        }
+
+        return response()->json(['code' => $code]);
     }
 }

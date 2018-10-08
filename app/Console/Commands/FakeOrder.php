@@ -60,19 +60,17 @@ class FakeOrder extends Command
 
     public function sendNotification($order, $devices)
     {
-        $message = [
-            'title' => $order->title,
-            'body' => $order->content,
-            'sound' => true,
-        ];
-
         $notification = [
             'registration_ids' => $devices,
-            'notification' => $message,
+            'data' => [
+                'title' => $order->title,
+                'content' => $order->content,
+                'order_id' => $order->id,
+            ],
         ];
 
         $headers = [
-            'Authorization: key=AIzaSyCH7mV96YbGpn2w8OhLxmB0v-JOrcoGxtE',
+            'Authorization: key=AAAAVQXImjM:APA91bHN_cQDaLxpC4zHPfQhoIVlQf554kfFzL84qPTo4kl3Jg3RTynLeuHfDoCWdOabe0CNO-EcY5TnWOybngwOFLU1wEwOWpkISGzrHFFobzJYfSR4SMjXraYJVpoZSrL-7Lv1d_ym',
             'Content-Type: application/json',
         ];
 
